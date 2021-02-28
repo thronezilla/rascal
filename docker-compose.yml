@@ -1,0 +1,38 @@
+version: "3"
+
+services:
+  gmod_server:
+    image: hackebein/garrysmod
+    ports:
+      - 27015:27015/tcp
+      - 27015:27015/udp
+    volumes:
+      - ./.data/garrysmod:/opt/steam/garrysmod
+      - ./cfg/server.cfg:/opt/steam/garrysmod/cfg/server.cfg
+      - ./src:/opt/steam/garrysmod/gamemodes/rascal
+    restart: always
+    tty: true
+    stdin_open: true
+    environment:
+    - CUSTOMPARAMETERS=+rcon_password "${RCON_PASSWORD}"
+    - GAMEMODE=rascal
+    - GAME_SERVER_ENV
+
+  webhooks:
+    build:
+      context: .
+      dockerfile: Dockerfile.webhook
+    restart: unless-stopped
+    ports: [ "9000:9000" ]
+    tty: true
+    volumes:
+      - ./cfg/hooks.yml:/etc/webhook/hooks.yml
+      - ./:/repo
+    environment:
+      - RCON_ADDRESS="gmod_server:27015"
+      - RCON_PASSWORD
+      - GITHUB_HOOK_SECRET
+    command:
+      - -verbose
+      - -template
+      - -hooks=/etc/webhook/hooks.yml

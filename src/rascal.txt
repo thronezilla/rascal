@@ -1,0 +1,10 @@
+"rascal"
+{
+	"base"	"base"
+	"title"	"rascal"
+	"menusystem"	"1"
+
+	"settings"
+	{
+	}
+}

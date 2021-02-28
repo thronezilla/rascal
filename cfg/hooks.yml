@@ -1,0 +1,17 @@
+- id: update-server
+  execute-command: "/var/scripts/update-server.sh"
+  command-working-directory: "/repo"
+  trigger-rule:
+    and:
+      - match:
+          type: payload-hash-sha1
+          secret: {{ getenv "GITHUB_HOOK_SECRET" }}
+          parameter:
+            source: header
+            name: X-Hub-Signature
+      - match:
+          type: value
+          value: refs/heads/main
+          parameter:
+            source: payload
+            name: ref

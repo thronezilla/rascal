@@ -1,0 +1,39 @@
+FROM  golang:alpine3.11 AS build
+RUN   apk add --update git \
+      && go get github.com/gorcon/rcon-cli \
+      && rm -rf /var/cache/apk/*
+
+FROM  almir/webhook
+COPY  --from=build /go/bin/rcon-cli /usr/local/bin/rcon
+COPY  bin/update-server.sh /usr/local/update-server.sh
+
+# NAME:
+#    rcon-cli - CLI for executing queries on a remote server
+
+# USAGE:
+#    rcon-cli [global options] [arguments...]
+
+# VERSION:
+#    0.0.0-develop
+
+# DESCRIPTION:
+#    Can be run in two modes - in the mode of a single query and in terminal mode of reading the input stream. 
+   
+#    To run single mode type commands after options flags. Example: 
+#    rcon-cli -a 127.0.0.1:16260 -p password command1 command2 
+   
+#    To run terminal mode just do not specify commands to execute. Example: 
+#    rcon-cli -a 127.0.0.1:16260 -p password
+
+# GLOBAL OPTIONS:
+#    --address value, -a value   Set host and port to remote server. Example 127.0.0.1:16260
+#    --password value, -p value  Set password to remote server
+#    --type value, -t value      Specify type of connection (default: rcon)
+#    --log value, -l value       Path to the log file. If not specified it is taken from the config
+#    --config value, -c value    Path to the configuration file (default: rcon.yaml)
+#    --env value, -e value       Config environment with server credentials (default: default)
+#    --help, -h                  show help (default: false)
+#    --version, -v               print the version (default: false)
+
+# COPYRIGHT:
+#    Copyright (c) 2020 Pavel Korotkiy (outdead)
