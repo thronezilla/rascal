@@ -1,8 +1,9 @@
 AddCSLuaFile('cl_init.lua')
 AddCSLuaFile('shared.lua')
 
+include('extern/animationsapi/boneanimlib.lua')
 include('shared.lua')
-print("init")
+
 
 DEFINE_BASECLASS('gamemode_base')
 

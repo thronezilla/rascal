@@ -40,8 +40,9 @@ function PLAYER:ShouldDrawLocalPlayer()
 end
 
 function PLAYER:StartMove(move, cmd)
+  self.Player:SetLuaAnimation('dodge_roll')
   cmd:ClearMovement()
-	cmd:ClearButtons()
+  cmd:ClearButtons()
 end
 
 player_manager.RegisterClass('player_rascal', PLAYER, 'player_default')
