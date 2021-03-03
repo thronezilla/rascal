@@ -3,7 +3,8 @@ AddCSLuaFile()
 ENT.Base 			= "base_nextbot"
 ENT.Spawnable		= true
 ENT.AttackRange = 50
-ENT.XP
+ENT.XP = 1
+ENT.ATKINFO = {type='atk_phys', dmg=5}
 
 function ENT:Initialize()
 
@@ -57,9 +58,9 @@ function ENT:RunBehaviour()
 
       local d = self:GetPos():Distance(self:GetEnemy():GetPos())
 
-      if d < self.AttackRange then
+      if d < self.AttackRange then --TODO: make this more dark soulsy (?)
         local dmg = DamageInfo()
-        dmg:SetDamage( 10 )
+        dmg:SetDamage( self.ATKINFO.dmg )
         dmg:SetAttacker( self )
         dmg:SetDamageType( DMG_SLASH ) 
       
@@ -85,6 +86,31 @@ function ENT:RunBehaviour()
 
 end	
 
+function ENT:LootXP(atkr)
+  if SERVER then 
+			print(atkr:SteamID())
+			rascal.player_data[atkr:SteamID()].xp = rascal.player_data[atkr:SteamID()].xp + self.XP 
+	end
+end
+
+function ENT:OnKilled(dmginfo)
+  hook.Call( "OnNPCKilled", GAMEMODE, self, dmginfo:GetAttacker(), dmginfo:GetInflictor() )
+
+  local atkr = dmginfo:GetAttacker()
+
+  if SERVER and atkr and atkr:IsValid() and atkr:IsPlayer() then
+    self:LootXP(atkr)
+  end
+
+  self:BecomeRagdoll(dmginfo)
+
+	net.Start('rascal_setup')
+	net.WriteTable(rascal.player_data[atkr:SteamID()])
+	net.Send(atkr)
+
+	rascal.TryLevel(atkr:SteamID())
+end
+
 function ENT:ChaseEnemy( options )
 
 	local options = options or {}
@@ -103,6 +129,7 @@ function ENT:ChaseEnemy( options )
 		path:Update( self )
 		
 		if ( options.draw ) then path:Draw() end
+
 		if ( self.loco:IsStuck() ) then
 			self:HandleStuck()
 			return "stuck"
