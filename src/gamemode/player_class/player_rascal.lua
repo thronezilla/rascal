@@ -20,7 +20,9 @@ PLAYER.AvoidPlayers       = true   -- Automatically swerves around other players
 PLAYER.UseVMHands         = false   -- Uses viewmodel hands
 
 function PLAYER:Init()
-  if SERVER then self.Player:CrosshairDisable() end
+  if SERVER then 
+    self.Player:CrosshairDisable() 
+  end
 end
 
 function PLAYER:Loadout()
@@ -32,6 +34,7 @@ end
 function PLAYER:CalcView(view)
   view.origin = self.Player:EyePos() - view.angles:Forward() * 100
   view.drawviewer = true
+
   return view
 end
 

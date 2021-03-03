@@ -14,16 +14,16 @@ services:
     tty: true
     stdin_open: true
     environment:
-    - CUSTOMPARAMETERS=+rcon_password "${RCON_PASSWORD}"
-    - GAMEMODE=rascal
-    - GAME_SERVER_ENV
+      - CUSTOMPARAMETERS=+rcon_password "${RCON_PASSWORD}"
+      - GAMEMODE=rascal
+      - GAME_SERVER_ENV
 
   webhooks:
     build:
       context: .
       dockerfile: Dockerfile.webhook
     restart: unless-stopped
-    ports: [ "9000:9000" ]
+    ports: ["9000:9000"]
     tty: true
     volumes:
       - ./cfg/hooks.yml:/etc/webhook/hooks.yml
